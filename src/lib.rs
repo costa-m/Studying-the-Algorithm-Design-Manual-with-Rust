@@ -25,6 +25,21 @@ fn bubble_sort<T: std::cmp::PartialOrd>(list: &mut [T]) {
     }
 }
 
+// Selection sort
+// adapted from C code in: Skiena - Algorithm design manual
+fn selection_sort<T: std::cmp::PartialOrd>(list: &mut [T]) {
+    let length = list.len();
+    for i in 0..length {
+        let minimum_element_index = i;
+        for j in i + 1..length {
+            if list[j] < list[minimum_element_index] {
+                list.swap(j, minimum_element_index);
+            }
+        }
+        // at this point list[i] <= list[l], for i < l
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -113,6 +128,50 @@ mod tests {
     fn bubble_sort_2() {
         let mut list = [6, 3, 4, 2, 7, 5, 1];
         bubble_sort(&mut list);
+        assert_eq!(list, [1, 2, 3, 4, 5, 6, 7]);
+    }
+
+    // TODO: unify tests
+    // bubble sort
+    #[test]
+    fn selection_sort_empty_list() {
+        let mut list: [i32; 0] = [];
+        selection_sort(&mut list);
+        assert_eq!(list, []);
+    }
+
+    #[test]
+    fn selection_sort_singleton_list() {
+        let mut list = [1];
+        selection_sort(&mut list);
+        assert_eq!(list, [1]);
+    }
+
+    #[test]
+    fn selection_sort_ordered() {
+        let mut list = [1, 2, 3, 4];
+        selection_sort(&mut list);
+        assert_eq!(list, [1, 2, 3, 4]);
+    }
+
+    #[test]
+    fn selection_sort_reversed() {
+        let mut list = [4, 3, 2, 1];
+        selection_sort(&mut list);
+        assert_eq!(list, [1, 2, 3, 4]);
+    }
+
+    #[test]
+    fn selection_sort_1() {
+        let mut list = [1, 3, 4, 2];
+        selection_sort(&mut list);
+        assert_eq!(list, [1, 2, 3, 4]);
+    }
+
+    #[test]
+    fn selection_sort_2() {
+        let mut list = [6, 3, 4, 2, 7, 5, 1];
+        selection_sort(&mut list);
         assert_eq!(list, [1, 2, 3, 4, 5, 6, 7]);
     }
 }
