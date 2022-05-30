@@ -1,3 +1,5 @@
+mod linked_list;
+
 // Insertion sort
 // adapted from C code in: Skiena - Algorithm design manual
 fn insertion_sort<T: std::cmp::PartialOrd>(list: &mut [T]) {
@@ -42,6 +44,7 @@ fn selection_sort<T: std::cmp::PartialOrd>(list: &mut [T]) {
 
 #[cfg(test)]
 mod tests {
+    use super::linked_list as ll;
     use super::*;
 
     // Insertion sort
@@ -173,5 +176,75 @@ mod tests {
         let mut list = [6, 3, 4, 2, 7, 5, 1];
         selection_sort(&mut list);
         assert_eq!(list, [1, 2, 3, 4, 5, 6, 7]);
+    }
+
+    // inserting elements
+    #[test]
+    fn insert_element_on_empty_list() {
+        let list = ll::List::Elem(5, Box::new(ll::List::Empty));
+        let mut list2 = ll::List::Empty;
+        ll::insert(&mut list2, 5);
+        assert_eq!(list, list2);
+    }
+
+    #[test]
+    fn insert_multiple_elements_on_empty_list() {
+        let list = ll::List::Elem(5, Box::new(ll::List::Elem(7, Box::new(ll::List::Empty))));
+        let mut list2 = ll::List::Empty;
+        ll::insert(&mut list2, 7);
+        ll::insert(&mut list2, 5);
+        assert_eq!(list, list2);
+    }
+
+    #[test]
+    fn insert_element_on_nonempty_list() {
+        let list = ll::List::Elem(5, Box::new(ll::List::Elem(7, Box::new(ll::List::Empty))));
+        let mut list2 = ll::List::Elem(7, Box::new(ll::List::Empty));
+        ll::insert(&mut list2, 5);
+        assert_eq!(list, list2);
+    }
+
+    // searching elements
+    #[test]
+    fn search_element_on_empty_list() {
+        let list = ll::List::Empty;
+        assert_eq!(ll::search_list(&list, &5), &ll::List::<i32>::Empty);
+    }
+
+    #[test]
+    fn search_element_on_list_not_containing_it() {
+        let mut list = ll::List::Empty;
+        ll::insert(&mut list, 7);
+        ll::insert(&mut list, 5);
+        assert_eq!(ll::search_list(&list, &8), &ll::List::<i32>::Empty);
+    }
+
+    #[test]
+    fn search_element_on_list_containing_it_in_beginning() {
+        let mut list = ll::List::Empty;
+        ll::insert(&mut list, 9);
+        ll::insert(&mut list, 7);
+        ll::insert(&mut list, 5);
+        assert_eq!(ll::search_list(&list, &5), &list);
+    }
+
+    #[test]
+    fn search_element_on_list_containing_it_in_end() {
+        let mut list = ll::List::Empty;
+        ll::insert(&mut list, 9);
+        let tail = list.clone();
+        ll::insert(&mut list, 7);
+        ll::insert(&mut list, 5);
+        assert_eq!(ll::search_list(&list, &9), &tail);
+    }
+
+    #[test]
+    fn search_element_on_list_containing_it_in_middle() {
+        let mut list = ll::List::Empty;
+        ll::insert(&mut list, 9);
+        ll::insert(&mut list, 7);
+        let tail = list.clone();
+        ll::insert(&mut list, 5);
+        assert_eq!(ll::search_list(&list, &7), &tail);
     }
 }
